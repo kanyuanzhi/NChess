@@ -1,16 +1,11 @@
 import java.util.*;
 
 public class TicTacToe {
-    private int[][] checkerborder = new int[3][3];
+    private static final int SIZE = 3;
+    private int[][] checkerborder = new int[SIZE][SIZE];
     private int round = 0;
     private boolean flag = true;
-
-    private ArrayList<Coordinate> coordinates1 = new ArrayList<>();
-    private ArrayList<Coordinate> coordinates2 = new ArrayList<>();
-    private Map coordinates1_x = new HashMap();
-    private Map coordinates1_y = new HashMap();
-    private Map coordinates2_x = new HashMap();
-    private Map coordinates2_y = new HashMap();
+    private boolean ending = true;
 
     private int[][] getCheckerborder() {
         return checkerborder;
@@ -30,35 +25,71 @@ public class TicTacToe {
                 this.getCheckerborder()[i][j] = 0;
             }
         }
+        this.ending = true;
         this.printCheckerborder();
     }
 
-    public void layDownAChessman(int coordinate) {
+    public void begin() {
+        while (this.ending) {
+            if (flag) {
+                System.out.println("player1 走棋，请输入坐标：");
+            } else {
+                System.out.println("player2 走棋，请输入坐标：");
+            }
+            try {
+                String str = "";
+                Scanner input = new Scanner(System.in);
+                int coordinate = input.nextInt();
+                switch (this.layDownAChessman(coordinate)) {
+                    case 0:
+                        break;
+                    case 1:
+                        System.out.println("player 1 wins!");
+                        this.ending = false;
+                        break;
+                    case 2:
+                        System.out.println("player 2 wins!");
+                        this.ending = false;
+                        break;
+                    case 3:
+                        System.out.println("occupied!");
+                        break;
+                    case 4:
+                        System.out.println("illegal coordinate!");
+                        break;
+                }
+            } catch (Exception e) {
+                System.out.println("非法输入！");
+                //e.printStackTrace();
+            }
+        }
+    }
+
+    private int layDownAChessman(int coordinate) {
         if (this.checkCoordinate(coordinate)) {
             int x = (int) (coordinate / 10);
             int y = coordinate % 10;
-            if (this.checkOccupation(x, y)) {
+            if (this.checkOccupation(x - 1, y - 1)) {
                 this.getCheckerborder()[x - 1][y - 1] = checkFlag() ? 1 : 2;
-                if (checkFlag()) {
-                    this.coordinates1.add(new Coordinate(x, y));
-                    this.coordinateCount(this.coordinates1_x, this.coordinates1_y,x,y);
-                } else {
-                    this.coordinates2.add(new Coordinate(x, y));
-                    this.coordinateCount(this.coordinates2_x, this.coordinates2_y,x,y);
+                this.printCheckerborder();
+                if (this.checkFlag() && this.checkLine(new Coordinate(x - 1, y - 1))) {
+                    return 1;
+                }
+                if (!this.checkFlag() && this.checkLine(new Coordinate(x - 1, y - 1))) {
+                    return 2;
                 }
                 this.setFlag();
-                this.printCheckerborder();
-                this.checkCheckerborder();
+                return 0;
             } else {
-                System.out.println("occupied!");
+                return 3;
             }
         } else {
-            System.out.println("illegal coordinate!");
+            return 4;
         }
     }
 
     private boolean checkOccupation(int x, int y) {
-        if (this.getCheckerborder()[x - 1][y - 1] == 0) {
+        if (this.getCheckerborder()[x][y] == 0) {
             return true;
         } else {
             return false;
@@ -73,35 +104,131 @@ public class TicTacToe {
         }
     }
 
-    private void checkCheckerborder() {
-        if (this.greaterThanTwo(this.coordinates1_x) || this.greaterThanTwo(this.coordinates1_y)) {
-            System.out.println("player 1 wins!");
-        }
-        if (this.greaterThanTwo(this.coordinates2_x) || this.greaterThanTwo(this.coordinates2_y)) {
-            System.out.println("player 2 wins!");
-        }
-    }
-
-    private void coordinateCount(Map coordinates_x, Map coordinates_y, int x, int y) {
-        if (coordinates_x.containsKey(x)){
-            coordinates_x.put(x, (int)coordinates_x.get(x)+1);
-        }else {
-            coordinates_x.put(x, 1);
-        }
-        if (coordinates_y.containsKey(y)){
-            coordinates_y.put(y, (int)coordinates_y.get(y)+1);
-        }else {
-            coordinates_y.put(y, 1);
-        }
-    }
-
-    private boolean greaterThanTwo(Map m) {
-        for (Object value : m.values()) {
-            if ((Integer) value > 2) {
-                return true;
+    private boolean checkLine(Coordinate coo) {
+        int x = coo.getX();
+        int y = coo.getY();
+        int px = x;
+        int py = y;
+        int value = this.getCheckerborder()[x][y];
+        int count135 = 1;   //135度方向
+        int count45 = 1;    //45度方向
+        int count0 = 1;     //水平方向
+        int count90 = 1;    //垂直方向
+        while (px - 1 > 0 && py - 1 > 0) {
+            if (this.getCheckerborder()[px - 1][py - 1] == value) {
+                px = px - 1;
+                py = py - 1;
+                count135++;
+            } else {
+                px = x;
+                py = y;
+                break;
             }
         }
+        while (px + 1 < SIZE && py + 1 < SIZE) {
+            if (this.getCheckerborder()[px + 1][py + 1] == value) {
+                px = px + 1;
+                py = py + 1;
+                count135++;
+            } else {
+                px = x;
+                py = y;
+                break;
+            }
+        }
+        if (count135 >= SIZE) {
+            return true;
+        }
+
+        while (px + 1 < SIZE && py - 1 > 0) {
+            if (this.getCheckerborder()[px + 1][py - 1] == value) {
+                px = px + 1;
+                py = py - 1;
+                count45++;
+            } else {
+                px = x;
+                py = y;
+                break;
+            }
+        }
+        while (px - 1 > 0 && py + 1 < SIZE) {
+            if (this.getCheckerborder()[px - 1][py + 1] == value) {
+                px = px - 1;
+                py = py + 1;
+                count45++;
+            } else {
+                px = x;
+                py = y;
+                break;
+            }
+        }
+        if (count45 >= SIZE) {
+            return true;
+        }
+
+        while (px - 1 > 0) {
+            if (this.getCheckerborder()[px - 1][py] == value) {
+                px = px - 1;
+                count0++;
+            } else {
+                px = x;
+                break;
+            }
+        }
+        while (px + 1 < SIZE) {
+            if (this.getCheckerborder()[px + 1][py] == value) {
+                px = px + 1;
+                count0++;
+            } else {
+                px = x;
+                break;
+            }
+        }
+        if (count0 >= SIZE) {
+            return true;
+        }
+
+        while (py - 1 > 0) {
+            if (this.getCheckerborder()[px][py - 1] == value) {
+                py = py - 1;
+                count90++;
+            } else {
+                py = y;
+                break;
+            }
+        }
+        while (py + 1 < SIZE) {
+            if (this.getCheckerborder()[px][py + 1] == value) {
+                py = py + 1;
+                count90++;
+            } else {
+                py = y;
+                break;
+            }
+        }
+        if (count90 >= SIZE) {
+            return true;
+        }
+
         return false;
+    }
+
+    // TODO: 2018/3/8 0008  将每一方向上的判断抽象为一个函数
+    public void checkLineDirection(int angle, int x, int y) {
+        String condition1 = "";
+        String condition2 = "";
+        String px1 = "";
+        String px2 = "";
+        String py1 = "";
+        String py2 = "";
+        switch (angle) {
+            case 135: {
+                condition1 = "px - 1 > 0 && py - 1 > 0";
+                px1 = "px - 1";
+                condition2 = "px + 1 > 0 && py + 1 > 0";
+            }
+        }
+
     }
 
     private void printCheckerborder() {
@@ -116,7 +243,7 @@ public class TicTacToe {
         }
     }
 
-    class Coordinate {
+    private class Coordinate {
         private int x;
         private int y;
 
