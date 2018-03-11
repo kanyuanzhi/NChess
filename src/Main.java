@@ -12,7 +12,7 @@ public class Main {
 //        t.layDownAChessman(21);
 //        t.layDownAChessman(33);
         NChess n = new NChess();
-        n.init();
+        n.init(9,5);
         n.begin();
     }
 }

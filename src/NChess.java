@@ -1,15 +1,20 @@
 import java.util.*;
 
 public class NChess {
-    private static final int SIZE = 9;
-    private static final int N = 5;
-    private int[][] checkerborder = new int[SIZE][SIZE];
+    private int SIZE = 0;   //棋盘大小
+    private int N = 0;  //N子棋
+    private int[][] checkerborder;
     private int round = 0;
     private boolean flag = true;
+    private boolean initialized = false;
     private boolean ending = true;
 
     private int[][] getCheckerborder() {
         return checkerborder;
+    }
+
+    private void setCheckerborder(int size) {
+        this.checkerborder = new int[size][size];
     }
 
     private boolean checkFlag() {
@@ -20,18 +25,22 @@ public class NChess {
         this.flag = !this.flag;
     }
 
-    public void init() {
+    public void init(int size, int n) {
+        this.SIZE = size;
+        this.N = n;
+        this.setCheckerborder(size);
         for (int i = 0; i < this.getCheckerborder().length; i++) {
             for (int j = 0; j < this.getCheckerborder()[i].length; j++) {
                 this.getCheckerborder()[i][j] = 0;
             }
         }
         this.ending = true;
+        this.initialized = true;
         this.printCheckerborder();
     }
 
     public void begin() {
-        while (this.ending) {
+        while (this.initialized && this.ending) {
             if (flag) {
                 System.out.println("player1 走棋，请输入坐标：");
             } else {
@@ -244,18 +253,31 @@ public class NChess {
     private void printCheckerborder() {
         System.out.println("***  Round : " + this.round++ + "  ***");
         String head = "    ";
-        for (int k =0;k<SIZE;k++){
-            head+= k+1 +"    ";
+        for (int k = 0; k < SIZE; k++) {
+            head += k + 1 + "     ";
         }
         System.out.println(head);
         System.out.println();
         for (int i = 0; i < this.getCheckerborder().length; i++) {
-            String str = i+1+"   ";
+            String str = i + 1 + "   ";
             for (int j = 0; j < this.getCheckerborder()[i].length; j++) {
-                str += this.getCheckerborder()[i][j] + "    ";
+                str += setPieceFigure(this.getCheckerborder()[i][j]) + "    ";
             }
             System.out.println(str);
             System.out.println();
+        }
+    }
+
+    private String setPieceFigure(int num) {
+        switch (num) {
+            case 0:
+                return "▪";
+            case 1:
+                return "●";
+            case 2:
+                return "○";
+            default:
+                return "";
         }
     }
 
