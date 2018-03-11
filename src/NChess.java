@@ -25,10 +25,17 @@ public class NChess {
         this.flag = !this.flag;
     }
 
-    public void init(int size, int n) {
-        this.SIZE = size;
-        this.N = n;
-        this.setCheckerborder(size);
+    public void init() {
+        try {
+            System.out.println("请输入您想玩几子棋：");
+            Scanner input = new Scanner(System.in);
+            this.N = input.nextInt();
+            System.out.println("请输入棋盘大小：");
+            this.SIZE = input.nextInt();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        this.setCheckerborder(this.SIZE);
         for (int i = 0; i < this.getCheckerborder().length; i++) {
             for (int j = 0; j < this.getCheckerborder()[i].length; j++) {
                 this.getCheckerborder()[i][j] = 0;

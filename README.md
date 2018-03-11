@@ -10,9 +10,9 @@ https://github.com/kanyuanzhi/TicTacToe/raw/master/images/sketch.png
 
 使用
 ---
-以五子棋为例，棋盘大小为10×10
+根据提示分别输入几子棋与棋盘大小。
 ```java
 NChess n = new NChess();
-n.init(10,5);
+n.init();
 n.begin();
 ```
