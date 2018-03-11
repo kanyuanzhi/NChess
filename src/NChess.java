@@ -26,24 +26,31 @@ public class NChess {
     }
 
     public void init() {
-        try {
-            System.out.println("请输入您想玩几子棋：");
-            Scanner input = new Scanner(System.in);
-            this.N = input.nextInt();
-            System.out.println("请输入棋盘大小：");
-            this.SIZE = input.nextInt();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        this.setCheckerborder(this.SIZE);
-        for (int i = 0; i < this.getCheckerborder().length; i++) {
-            for (int j = 0; j < this.getCheckerborder()[i].length; j++) {
-                this.getCheckerborder()[i][j] = 0;
+        while (!this.initialized){
+            try {
+                System.out.println("请输入您想玩几子棋：");
+                Scanner input = new Scanner(System.in);
+                this.N = input.nextInt();
+                System.out.println("请输入棋盘大小：");
+                this.SIZE = input.nextInt();
+                if (this.N > this.SIZE){
+                    System.out.println("N子棋中N不能大于棋盘长度！");
+                    continue;
+                }
+                this.setCheckerborder(this.SIZE);
+                for (int i = 0; i < this.getCheckerborder().length; i++) {
+                    for (int j = 0; j < this.getCheckerborder()[i].length; j++) {
+                        this.getCheckerborder()[i][j] = 0;
+                    }
+                }
+                this.ending = true;
+                this.initialized = true;
+                this.printCheckerborder();
+            }catch (Exception e){
+                //e.printStackTrace();
+                System.out.println("非法输入！");
             }
         }
-        this.ending = true;
-        this.initialized = true;
-        this.printCheckerborder();
     }
 
     public void begin() {
